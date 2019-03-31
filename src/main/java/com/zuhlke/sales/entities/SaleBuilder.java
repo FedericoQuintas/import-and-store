@@ -73,7 +73,18 @@ public class SaleBuilder {
     }
 
     public Sale build() {
+        validateFieldIsNotEmpty(this.orderID);
+        validateFieldIsNotEmpty(this.shipMode);
+        validateFieldIsNotEmpty(this.productID);
+        validateFieldIsNotEmpty(this.customerName);
+        validateFieldIsNotEmpty(this.category);
+        validateFieldIsNotEmpty(this.customerID);
+
         return new Sale(this.orderID, this.orderDate, this.shipDate, this.shipMode, this.quantity,
                 this.discount, this.profit, this.productID, this.customerName, this.category, this.customerID);
+    }
+
+    private void validateFieldIsNotEmpty(String field) {
+        if(field.isEmpty() ) throw new IllegalArgumentException("Invalid input");
     }
 }

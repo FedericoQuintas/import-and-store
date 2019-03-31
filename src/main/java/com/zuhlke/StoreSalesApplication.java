@@ -17,10 +17,12 @@ public class StoreSalesApplication {
     }
 
     public void run(String[] args) {
+        try {
+            List<Sale> products = importSales.importFromCsv(args);
 
-        List<Sale> products = importSales.importFromCsv(args);
-
-        storeSales.store(products);
-
+            storeSales.store(products);
+        } catch (Exception ex){
+            System.out.println("Process interrupted due to: " + ex.getMessage());
+        }
     }
 }

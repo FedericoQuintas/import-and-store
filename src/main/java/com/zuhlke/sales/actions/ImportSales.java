@@ -34,14 +34,8 @@ public class ImportSales {
             br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
                 String[] sale = line.split(cvsSplitBy);
-                LocalDate orderDate = LocalDate.parse(sale[1], formatter);
-                LocalDate shipDate = LocalDate.parse(sale[2], formatter);
 
-                Sale createdSale = new SaleBuilder().withOrderID(sale[0]).withOrderDate(orderDate).withShipDate(shipDate)
-                        .withShipMode(sale[3]).withCustomerID(sale[4]).withCustomerName(sale[5])
-                        .withProductID(sale[12]).withCategory(sale[13])
-                        .withQuantity(Integer.valueOf(sale[17])).withDiscount(new BigDecimal(sale[18]))
-                        .withProfit(new BigDecimal(sale[19])).build();
+                Sale createdSale = buildSale(formatter, sale);
 
                 sales.add(createdSale);
             }
@@ -58,5 +52,15 @@ public class ImportSales {
                 }
             }
         }
+    }
+
+    private Sale buildSale(DateTimeFormatter formatter, String[] sale) {
+        LocalDate orderDate = LocalDate.parse(sale[1], formatter);
+        LocalDate shipDate = LocalDate.parse(sale[2], formatter);
+        return new SaleBuilder().withOrderID(sale[0]).withOrderDate(orderDate).withShipDate(shipDate)
+                .withShipMode(sale[3]).withCustomerID(sale[4]).withCustomerName(sale[5])
+                .withProductID(sale[12]).withCategory(sale[13])
+                .withQuantity(Integer.valueOf(sale[17])).withDiscount(new BigDecimal(sale[18]))
+                .withProfit(new BigDecimal(sale[19])).build();
     }
 }

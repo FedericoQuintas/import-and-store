@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
+import static junit.framework.TestCase.fail;
+
 public class ImportSalesTest {
 
     private ImportSales importSales;
@@ -77,4 +79,87 @@ public class ImportSalesTest {
         Assert.assertEquals("SO-20335", firstSaleFromSecondFile.getCustomerID());
     }
 
+    @Test
+    public void whenImportASaleWithNoOrderIDThenTheProcessIsInterruptedWithAnException() {
+
+        String[] files = {"src/test/resources/sales-test-no-order-id.csv"};
+
+        try {
+            importSales.importFromCsv(files);
+            fail();
+        } catch (IllegalArgumentException exception) {
+            Assert.assertEquals("Invalid input", exception.getMessage());
+        }
+
+    }
+
+    @Test
+    public void whenImportASaleWithNoShipModeThenTheProcessIsInterruptedWithAnException() {
+
+        String[] files = {"src/test/resources/sales-test-no-ship-mode.csv"};
+
+        try {
+            importSales.importFromCsv(files);
+            fail();
+        } catch (IllegalArgumentException exception) {
+            Assert.assertEquals("Invalid input", exception.getMessage());
+        }
+
+    }
+
+    @Test
+    public void whenImportASaleWithNoProductIDThenTheProcessIsInterruptedWithAnException() {
+
+        String[] files = {"src/test/resources/sales-test-no-product-id.csv"};
+
+        try {
+            importSales.importFromCsv(files);
+            fail();
+        } catch (IllegalArgumentException exception) {
+            Assert.assertEquals("Invalid input", exception.getMessage());
+        }
+
+    }
+
+    @Test
+    public void whenImportASaleWithNoCustomerNameThenTheProcessIsInterruptedWithAnException() {
+
+        String[] files = {"src/test/resources/sales-test-no-customer-name.csv"};
+
+        try {
+            importSales.importFromCsv(files);
+            fail();
+        } catch (IllegalArgumentException exception) {
+            Assert.assertEquals("Invalid input", exception.getMessage());
+        }
+
+    }
+
+    @Test
+    public void whenImportASaleWithNoCategoryThenTheProcessIsInterruptedWithAnException() {
+
+        String[] files = {"src/test/resources/sales-test-no-category.csv"};
+
+        try {
+            importSales.importFromCsv(files);
+            fail();
+        } catch (IllegalArgumentException exception) {
+            Assert.assertEquals("Invalid input", exception.getMessage());
+        }
+
+    }
+
+    @Test
+    public void whenImportASaleWithNoCustomerIDThenTheProcessIsInterruptedWithAnException() {
+
+        String[] files = {"src/test/resources/sales-test-no-customer-id.csv"};
+
+        try {
+            importSales.importFromCsv(files);
+            fail();
+        } catch (IllegalArgumentException exception) {
+            Assert.assertEquals("Invalid input", exception.getMessage());
+        }
+
+    }
 }

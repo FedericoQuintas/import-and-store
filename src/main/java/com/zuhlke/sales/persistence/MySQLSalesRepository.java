@@ -11,42 +11,19 @@ import java.util.List;
 
 public class MySQLSalesRepository implements SalesRepository{
 
-    static Connection crunchifyConn = null;
+    static Connection connection = null;
 
-    public MySQLSalesRepository(){
-        makeJDBCConnection();
-    }
-
-    private void makeJDBCConnection() {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        try {
-
-            crunchifyConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/zuhlke", "root", "");
-            if (crunchifyConn != null) {
-                System.out.println("Connection Successful! Enjoy. Now it's time to push data");
-            } else {
-                System.out.println("Failed to make connection!");
-            }
-        } catch (SQLException e) {
-            System.out.println("MySQL Connection Failed!");
-            e.printStackTrace();
-            return;
-        }
+    public MySQLSalesRepository(Connection conn){
+        connection = conn;
     }
 
     @Override
     public List<Sale> getSales() {
-        String selectQueryStatement = "Select * from STORE_ORDER ";
+        String selectQueryStatement = "Select * from STORE_ORDER";
         List<Sale> sales = new ArrayList<>();
         try {
 
-            PreparedStatement crunchifyPrepareStat = crunchifyConn.prepareStatement(selectQueryStatement);
+            PreparedStatement crunchifyPrepareStat = connection.prepareStatement(selectQueryStatement);
             ResultSet rs = crunchifyPrepareStat.executeQuery();
 
             while(rs.next()){
@@ -84,26 +61,28 @@ public class MySQLSalesRepository implements SalesRepository{
         for(Sale sale: sales) {
 
             try {
-                String insertQueryStatement = "INSERT  INTO  STORE_ORDER (ORDER_ID,ORDER_DATE,SHIP_DATE,SHIP_MODE,QUANTITY,DISCOUNT,PROFIT,PRODUCT_ID,CUSTOMER_NAME,CATEGORY,CUSTOMER_ID) VALUES  (?,?,?,?,?,?,?,?,?,?,?)";
+                String insertQueryStatement = "INSERT  INTO  STORE_ORDER " +
+                        "(ORDER_ID,ORDER_DATE,SHIP_DATE,SHIP_MODE,QUANTITY,DISCOUNT,PROFIT,PRODUCT_ID,CUSTOMER_NAME,CATEGORY,CUSTOMER_ID)" +
+                        " VALUES  (?,?,?,?,?,?,?,?,?,?,?)";
 
-                PreparedStatement crunchifyPrepareStat = crunchifyConn.prepareStatement(insertQueryStatement);
-                crunchifyPrepareStat.setString(1, sale.getOrderID());
-                crunchifyPrepareStat.setDate(2, java.sql.Date.valueOf(sale.getOrderDate()));
-                crunchifyPrepareStat.setDate(3, java.sql.Date.valueOf(sale.getShipDate()));
-                crunchifyPrepareStat.setString(4, sale.getShipMode());
-                crunchifyPrepareStat.setInt(5, sale.getQuantity());
-                crunchifyPrepareStat.setBigDecimal(6, sale.getDiscount());
-                crunchifyPrepareStat.setBigDecimal(7, sale.getProfit());
-                crunchifyPrepareStat.setString(8, sale.getProductID());
-                crunchifyPrepareStat.setString(9, sale.getCustomerName());
-                crunchifyPrepareStat.setString(10, sale.getCategory());
-                crunchifyPrepareStat.setString(11, sale.getCustomerID());
+                PreparedStatement preparedStatement = connection.prepareStatement(insertQueryStatement);
+                preparedStatement.setString(1, sale.getOrderID());
+                preparedStatement.setDate(2, java.sql.Date.valueOf(sale.getOrderDate()));
+                preparedStatement.setDate(3, java.sql.Date.valueOf(sale.getShipDate()));
+                preparedStatement.setString(4, sale.getShipMode());
+                preparedStatement.setInt(5, sale.getQuantity());
+                preparedStatement.setBigDecimal(6, sale.getDiscount());
+                preparedStatement.setBigDecimal(7, sale.getProfit());
+                preparedStatement.setString(8, sale.getProductID());
+                preparedStatement.setString(9, sale.getCustomerName());
+                preparedStatement.setString(10, sale.getCategory());
+                preparedStatement.setString(11, sale.getCustomerID());
 
-                crunchifyPrepareStat.executeUpdate();
-                crunchifyPrepareStat.close();
-
+                preparedStatement.executeUpdate();
+                preparedStatement.close();
+                System.out.println("Stored sale with Order ID: " + sale.getOrderID());
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e.getMessage());
             }
         }
     }
